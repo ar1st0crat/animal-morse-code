@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Animal morse code</title>
+    <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Bree+Serif" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="static/css/index.css" />
+    <script type="text/javascript" src="static/js/index.js"></script>
+</head>
+<body>
+    <img src="static/logo.svg" id="logo" onclick="location.href='https://ar1st0crat.github.io'" />
+    <img src="static/images/coding.png" width="40" style="position:absolute; top: 65px;" />
+    <div id="main">
+        <form>
+            <input type="text" />
+            <button type="button" id="say-button" onclick="say();">Say!</button>
+            <p>
+                <em id="played-message"></em><span id="decoded-message"></span>
+            </p>
+            <div id="tones">
+                <img src="static/images/morse-device.svg"/>
+                <img src="static/images/cat.png"/>
+                <img src="static/images/dog.gif"/>
+            </div>
+            <!--
+            <input type="radio" name="tone" value="Boring" checked="true">
+            <label for="tone">Boring</label>
+            <input type="radio" name="tone" value="Cat">
+            <label for="tone">Cat</label>
+            <input type="radio" name="tone" value="Dog">
+            <label for="tone">Doggy</label>
+            -->
+        </form>
+    </div>
+    <a href="https://github.com/ar1st0crat">
+        <img src="static/images/github.png" id="github" alt="github.com/ar1st0crat"/>
+    </a>
+    <div id="about">
+        &copy; 2017 Tim Sharii<br/>
+        Just a human being with a PhD
+    </div>
+</body>
+</html>
