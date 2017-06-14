@@ -6,6 +6,7 @@
     <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Bree+Serif" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="static/css/index.css" />
+    <script type="text/javascript" src="static/js/morse.js"></script>
     <script type="text/javascript" src="static/js/index.js"></script>
 </head>
 <body>
@@ -14,23 +15,15 @@
     <div id="main">
         <form>
             <input type="text" />
-            <button type="button" id="say-button" onclick="say();">Say!</button>
+            <button type="button" id="say-button" onclick="play();">Say!</button>
             <p>
                 <em id="played-message"></em><span id="decoded-message"></span>
             </p>
             <div id="tones">
-                <img src="static/images/morse-device.svg"/>
-                <img src="static/images/cat.png"/>
-                <img src="static/images/dog.gif"/>
+                <img src="static/images/morse-device.svg" class="tone" onclick="chooseTone(0);" />
+                <img src="static/images/cat.png" class="tone" onclick="chooseTone(1);" />
+                <img src="static/images/dog.gif" class="tone" onclick="chooseTone(2);" />
             </div>
-            <!--
-            <input type="radio" name="tone" value="Boring" checked="true">
-            <label for="tone">Boring</label>
-            <input type="radio" name="tone" value="Cat">
-            <label for="tone">Cat</label>
-            <input type="radio" name="tone" value="Dog">
-            <label for="tone">Doggy</label>
-            -->
         </form>
     </div>
     <a href="https://github.com/ar1st0crat">
@@ -40,5 +33,8 @@
         &copy; 2017 Tim Sharii<br/>
         Just a human being with a PhD
     </div>
+    <script type="text/javascript">
+        init();
+    </script>
 </body>
 </html>

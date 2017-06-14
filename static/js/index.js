@@ -1,120 +1,56 @@
-alphabet = {
-    // letters:
-    'a': '.-',   'b': '-...', 'c': '-.-.', 'd': '-..', 'e': '.',
-    'f': '..-.', 'g': '--.',  'h': '....', 'i': '..',  'j': '.---',
-    'k': '-.-',  'l': '.-..', 'm': '--',   'n': '-.',  'o': '---',
-    'p': '.--.', 'q': '--.-', 'r': '.-.',  's': '...', 't': '-',
-    'u': '..-',  'v': '...-', 'w': '.--',  'x': '-..-','y': '-.--', 'z': '--..',
-    // digits:
-    '1': '.----', '2': '..---', '3': '...--', '4': '....-', '5': '.....',
-    '6': '-....', '7': '--...', '8': '---..', '9': '----.', '0': '-----',
-    // misc:
-    '.': '.-.-.-', ',': '--..--', '?': '..--..',  '\'': '.----.',
-    '/': '-..-.',  '(': '-.--.',  ')': '-.--.-',  '&': '.-...',
-    ':': '---...', ';': '-.-.-.', '=': '-...-',   '+': '.-.-.',
-    '-': '-....-', '-': '..--.-', '\"': '.-..-.', '$': '...-..-',
-    '!': '-.-.--', '@': '.--.-.'
-};
+var morse = new MorseCodec();
+var morsePlayer = new MorseCodePlayer();
 
-isPlaying = false;
-morseCode = '';
-letterIndex = 0;
+var code = '';
+var played = '';
+var toneIndex = 2;
 
-function encode(text) {
-    return [].map.call(text.toLowerCase(),
-        function(s) {
-            return alphabet[s];
-        })
-        .join(' ');
+function init() {
+    var icons = document.getElementsByClassName('tone');
+    icons[toneIndex].setAttribute('class', 'selected-tone');
+    morsePlayer.loadSoundSet(toneIndex);
 }
 
-function playMessage() {
+function chooseTone(idx) {
+    if (idx === toneIndex) {
+        return;
+    }
+    var icons = document.querySelectorAll('#tones img');
+    icons[toneIndex].setAttribute('class', 'tone');
+    icons[idx].setAttribute('class', 'selected-tone');
+    toneIndex = idx;
+    morsePlayer.loadSoundSet(idx);
+}
+
+function updateLabels() {
     var code = document.getElementById('decoded-message').textContent;
     var played = document.getElementById('played-message').textContent;
 
-    if (code.length === 0 || !isPlaying) {
-        stop();
-        return;
-    }
-
-    playSound(code[0]);
-    
     played += code[0];
-    code = code.replace(code[0], '');
+    code = code.slice(1);
 
     document.getElementById('decoded-message').textContent = code;
     document.getElementById('played-message').textContent = played;
 
-    setTimeout(playMessage, 400);
+    if (code === '')
+        document.getElementById('say-button').textContent = 'Say!';
 }
 
-function say() {
-    if (isPlaying) {
-        isPlaying = false;
+function play() {
+    if (morsePlayer.isPlaying) {
+        stop();
     }
     else {
         var message = document.querySelector('#main input[type="text"]').value;
-        morseCode = encode(message);
-        document.getElementById('decoded-message').textContent = morseCode;
+        code = morse.encode(message);
+        document.getElementById('decoded-message').textContent = code;
         document.getElementById('played-message').textContent = '';
         document.getElementById('say-button').textContent = 'Stop';
-        isPlaying = true;
-        playMessage();
+        morsePlayer.playText(morse.encodeWithSpacing(message), updateLabels);
     }
 }
 
 function stop() {
     document.getElementById('say-button').textContent = 'Say!';
-    isPlaying = false;
+    morsePlayer.stop();
 }
-
-// WebAudio functions:
-
-var context = new AudioContext();
-
-var dotSource, dashSource;
-var destination;
-
-
-function loadSoundFile(url, setSound) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'arraybuffer';
-    xhr.onload = function(err) {
-        context.decodeAudioData(this.response,
-        setSound,
-        function(err) {
-            console.log('Error decoding file', err);
-        });
-    };
-    xhr.send();
-}
-
-function setDotSound(decodedArrayBuffer) {
-    dotSource = context.createBufferSource();
-    dotSource.buffer = decodedArrayBuffer;
-    dotSource.connect(context.destination);
-}
-
-function setDashSound(decodedArrayBuffer) {
-    dashSource = context.createBufferSource();
-    dashSource.buffer = decodedArrayBuffer;
-    dashSource.connect(context.destination);
-}
-
-function playSound(dot_or_dash) {
-    if (!isPlaying) {
-        return;
-    }
-    else if (dot_or_dash === '.') {
-        dotSource.start(0);
-        setDotSound(dotSource.buffer);
-    }
-    else if (dot_or_dash === '-'){
-        dashSource.start(0);
-        setDashSound(dashSource.buffer);
-    }
-}
-
-loadSoundFile('static/sounds/dog_dot.wav', setDotSound);
-loadSoundFile('static/sounds/dog_dash.wav', setDashSound);

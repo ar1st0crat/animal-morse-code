@@ -1,7 +1,48 @@
-@import url("main.css");
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    text-align: center;
+    background: rgb(195, 177, 159);
+    background: -webkit-linear-gradient(rgb(195, 177, 159) 0%, rgb(35, 35, 32) 100%);
+    background: -o-linear-gradient(rgb(195, 177, 159) 0%, rgb(35, 35, 32) 100%);
+    background: linear-gradient(rgb(195, 177, 159) 0%, rgb(35, 35, 32) 100%);
+    background-attachment: fixed;
+    font-family: "Bree Serif";
+    color: white;
+}
+
+#logo {
+    width: 400px;
+    height: 120px;
+    margin-top: 25px;
+    display: inline;
+}
 
 #logo:hover {
     cursor: pointer;
+}
+
+#github {
+    margin: 5px;
+    width: 36px;
+    height: 36px;
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+#github:hover {
+    opacity: 1;
+}
+
+#about {
+    color: white;
+    font-family: 'Bree Serif';
+    font-size:  14px;
+    margin-bottom: 40px;
 }
 
 #main {
@@ -14,6 +55,7 @@
     margin: 0 auto;
     margin-top: 30px;
     margin-bottom: 60px;
+    word-wrap: break-word;
 }
 
 #main img {
@@ -44,29 +86,20 @@
     border-style: none;
 }
 
-.main-icon {
-    margin: 5px -5px -5px -5px;
+.tone {
+    padding-top: 15px;
+    margin-bottom: -25px;
     width: 100px;
     height: 100px;
-    text-align: center;
-    vertical-align: middle;
-    border-top-left-radius: 50%;
-    border-top-right-radius: 50%;
-    border-bottom-left-radius: 50%;
-    border-bottom-right-radius: 50%;
-    display: inline-block;
-}
-
-.main-icon:hover {
-    background-color: rgba(250,254,251,0.15);
+    padding-bottom: 20px;
+    opacity: 0.6;
     cursor: pointer;
 }
 
-.main-icon img {
-    padding-top: 15px;
+.selected-tone {
+    border-bottom: 2px rgba(255,255,255,0.8) solid;
+    padding-bottom: 20px;
     margin-bottom: -25px;
-    width: 32px;
-    height: 32px;
 }
 
 input {
@@ -107,6 +140,7 @@ input:focus {
 #decoded-message, #played-message {
     margin: 0;
     padding: 0;
+    font-family: "Bree Serif";
 }
 
 #played-message {
