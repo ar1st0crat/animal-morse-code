@@ -119,3 +119,14 @@ input:focus {
     font-size: 1.2em;
     color: yellow;
 }
+
+.active-visualize {
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 10px;
+}
+
+#sound-visualize {
+    width: 360px;
+    height: 0px;
+    padding: 10px;
+}

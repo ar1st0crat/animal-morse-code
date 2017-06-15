@@ -192,14 +192,14 @@ MorseCodePlayer.prototype.setDotSound = function(decodedArrayBuffer, obj) {
     var self = obj ? obj : this;
     self.dotSource = _context.createBufferSource();
     self.dotSource.buffer = decodedArrayBuffer;
-    self.dotSource.connect(_context.destination);
+    self.dotSource.connect(_analyser);
 }
 
 MorseCodePlayer.prototype.setDashSound = function(decodedArrayBuffer, obj) {
     var self = obj ? obj : this;
     self.dashSource = _context.createBufferSource();
     self.dashSource.buffer = decodedArrayBuffer;
-    self.dashSource.connect(_context.destination);
+    self.dashSource.connect(_analyser);
 }
 
 MorseCodePlayer.prototype.playText = function(text, update) {
@@ -234,5 +234,10 @@ MorseCodePlayer.prototype.stop = function() {
     this.isPlaying = false;
 }
 
-var _context = new AudioContext();
 var _morse = new MorseCodec();
+
+var _context = new AudioContext();
+
+var _analyser = _context.createAnalyser();
+_analyser.connect(_context.destination);
+_analyser.fftSize = 8192;

@@ -1,12 +1,27 @@
 var morse = new MorseCodec();
 var morsePlayer = new MorseCodePlayer();
 
+/** Web Audio API Analyser - related variables */
+var bufferLength = _analyser.frequencyBinCount;
+var dataArray = new Uint8Array(bufferLength);
+
+/** Canvas-related variables */
+var canvas = document.getElementById('sound-visualize');
+var canvasCtx = canvas.getContext("2d");
+
+/** HTML elements */
+var icons = document.querySelectorAll('#tones img');
+var decodedLabel = document.getElementById('decoded-message');
+var playedLabel = document.getElementById('played-message');
+var playButton = document.getElementById('say-button');
+var textInput = document.querySelector('#main input[type="text"]');
+
 var code = '';
 var played = '';
 var toneIndex = 2;
 
+
 function init() {
-    var icons = document.getElementsByClassName('tone');
     icons[toneIndex].setAttribute('class', 'selected-tone');
     morsePlayer.loadSoundSet(toneIndex);
 }
@@ -15,7 +30,6 @@ function chooseTone(idx) {
     if (idx === toneIndex) {
         return;
     }
-    var icons = document.querySelectorAll('#tones img');
     icons[toneIndex].setAttribute('class', 'tone');
     icons[idx].setAttribute('class', 'selected-tone');
     toneIndex = idx;
@@ -23,17 +37,17 @@ function chooseTone(idx) {
 }
 
 function updateLabels() {
-    var code = document.getElementById('decoded-message').textContent;
-    var played = document.getElementById('played-message').textContent;
+    var code = decodedLabel.textContent;
+    var played = playedLabel.textContent;
 
     played += code[0];
     code = code.slice(1);
 
-    document.getElementById('decoded-message').textContent = code;
-    document.getElementById('played-message').textContent = played;
+    decodedLabel.textContent = code;
+    playedLabel.textContent = played;
 
     if (code === '') {
-        document.getElementById('say-button').textContent = 'Say!';
+        playButton.textContent = 'Say!';
     }
 }
 
@@ -42,19 +56,64 @@ function play() {
         stop();
     }
     else {
-        var message = document.querySelector('#main input[type="text"]').value;
+        var message = textInput.value;
         if (message === '') {
             return;
         }
         code = morse.encode(message);
-        document.getElementById('decoded-message').textContent = code;
-        document.getElementById('played-message').textContent = '';
-        document.getElementById('say-button').textContent = 'Stop';
+        decodedLabel.textContent = code;
+        playedLabel.textContent = '';
+        playButton.textContent = 'Stop';
         morsePlayer.playText(message, updateLabels);
+        activateCanvas();
+        draw();
     }
 }
 
 function stop() {
-    document.getElementById('say-button').textContent = 'Say!';
+    playButton.textContent = 'Say!';
     morsePlayer.stop();
 }
+
+function activateCanvas() {
+    canvas.setAttribute('class', 'active-visualize');
+    canvas.style.height = '50px';
+}
+
+function deactivateCanvas() {
+    canvas.setAttribute('class', 'none');
+    canvas.style.height = '0px';
+}
+
+function draw() {
+    if (!morsePlayer.isPlaying) {
+        setTimeout(deactivateCanvas, 300);
+        return;
+    }
+
+    requestAnimationFrame(draw);
+
+    _analyser.getByteTimeDomainData(dataArray);
+
+    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+    canvasCtx.lineWidth = 1;
+    canvasCtx.strokeStyle = 'rgb(255, 255, 0)';
+    canvasCtx.beginPath();
+
+    var sliceWidth = canvas.width * 1.0 / bufferLength;
+    var x = 0;
+
+    for (var i = 0; i < bufferLength; i++) {
+        var v = dataArray[i] / 128.0;
+        var y = v * canvas.height / 2;
+        if (i === 0) {
+            canvasCtx.moveTo(x, y);
+        } else {
+            canvasCtx.lineTo(x, y);
+        }
+        x += sliceWidth;
+    }
+
+    canvasCtx.lineTo(canvas.width, canvas.height / 2);
+    canvasCtx.stroke();
+};

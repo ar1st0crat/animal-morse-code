@@ -6,8 +6,7 @@
     <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Bree+Serif" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="static/css/index.css" />
-    <script type="text/javascript" src="static/js/morse.js"></script>
-    <script type="text/javascript" src="static/js/index.js"></script>
+    
 </head>
 <body>
     <img src="static/logo.svg" id="logo" onclick="location.href='https://ar1st0crat.github.io'" />
@@ -19,6 +18,7 @@
             <p>
                 <em id="played-message"></em><span id="decoded-message"></span>
             </p>
+            <canvas id="sound-visualize"></canvas>
             <div id="tones">
                 <img src="static/images/morse-device.svg" class="tone" onclick="chooseTone(0);" />
                 <img src="static/images/cat.png" class="tone" onclick="chooseTone(1);" />
@@ -33,6 +33,8 @@
         &copy; 2017 Tim Sharii<br/>
         Just a human being with a PhD
     </div>
+    <script type="text/javascript" src="static/js/morse.js"></script>
+    <script type="text/javascript" src="static/js/index.js"></script>
     <script type="text/javascript">
         init();
     </script>
