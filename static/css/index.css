@@ -58,48 +58,20 @@ body {
     word-wrap: break-word;
 }
 
-#main img {
-    width: 110px;
-    margin: 10px;
-}
-
-#main label {
-    display: inline-block;
-    font-family: 'Bree Serif';
-    color: rgb(210,190,120);
-    margin-right: 40px;
-    line-height: 25px;
-}
-
-#main input[type="radio"] {
-    margin-left: 25px;
-    width: 15px;
-}
-
-#main input[type="radio"]:checked,
-#main input[type="radio"]:focus {
-    width: 30px;
-    outline: 0;
-    outline-style: none;
-    outline-width: 0;
-    border: 0;
-    border-style: none;
+#tones img {
+    height: 90px;
+    margin: 7px 0px -25px 7px;
+    padding-bottom: 20px;
 }
 
 .tone {
     padding-top: 15px;
-    margin-bottom: -25px;
-    width: 100px;
-    height: 100px;
-    padding-bottom: 20px;
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: pointer;
 }
 
 .selected-tone {
     border-bottom: 2px rgba(255,255,255,0.8) solid;
-    padding-bottom: 20px;
-    margin-bottom: -25px;
 }
 
 input {

@@ -59,7 +59,7 @@ MorseCodec.prototype.encodeWithSpacing = function(text) {
     var words = text.trim().replace(/\s+/, ' ').split(' ');
 
     var code = [];
-    for (var i=0; i<words.length; i++) {
+    for (var i = 0; i < words.length; i++) {
         code.push(
             [].map.call(words[i].toLowerCase(),
                 function(s) {
@@ -72,12 +72,47 @@ MorseCodec.prototype.encodeWithSpacing = function(text) {
 }
 
 /**
- * Decodes text from morse code
+ * Decodes text from morse code.
+ * Morse code is treated as if it was encoded with spaces!
  * @param {string} code - Morse code to decode
  * @return {string} text - decoded string
  */
 MorseCodec.prototype.decode = function(code) {
-    return 'TODO: decoded';
+    var wordGap = Array(this.MEDIUM_GAP + 1).join(' ');
+    var symbolGap = Array(this.SHORT_GAP + 1).join(' ');
+
+    var words = code.split(wordGap);
+    var decodedWords = [];
+
+    for (var i = 0; i < words.length; i++) {
+        var symbols = words[i].split(symbolGap);
+        var decoded = '';
+        for (var j = 0; j < symbols.length; j++) {
+            var code = symbols[j].split(' ').join('');
+            var symbol = this.getSymbolByCode(code);
+            if (symbol !== undefined) {
+                decoded += symbol;
+            }
+            else {
+                return undefined;
+            }
+        }
+        decodedWords.push(decoded);
+    }
+    return decodedWords.join(' ');
+}
+
+/**
+ * Given a string of dots and dashes returns the corresponding symbol
+ * @param {string} code - Morse code of a symbol
+ * @return {string} symbol - symbol in the alphabet or undefined
+ */
+MorseCodec.prototype.getSymbolByCode = function(code) {
+    for (var symbol in this.ALPHABET) {
+        if (this.ALPHABET[symbol] === code) {
+            return symbol;
+        }
+    }
 }
 
 
@@ -89,17 +124,48 @@ var MorseCodePlayer = function() {
     /** Time unit duration in milliseconds */
     this.DOT_DURATION = 75;
     this.DASH_DURATION = this.DOT_DURATION * 3;
+    /** Frequency by default is D5 */
+    this.TONE = 587;
+    this.SOUND_FILES = 
+        [['static/sounds/cat_dot.wav', 'static/sounds/cat_dash.wav'],
+         ['static/sounds/dog_dot.wav', 'static/sounds/dog_dash.wav']];
+         // ...you can add sounds by other animals to this array...
 
+    /** By default create sound buffer with single tone */
+    this.loadSoundSet(0);
     this.isPlaying = false;
 };
 
+/**
+ * Creates Web Audio API buffer containing one sinusoid 
+ * @param {number} len - duration of the sinusoid in msec
+ * @param {number} freq - frequency of the sinusoid in Hz
+ * @return {AudioBuffer} buffer - resulting buffer with sinusoid
+ */
+MorseCodePlayer.prototype.createToneSignal = function(len, freq) {
+    len *= _context.sampleRate / 1000;
+    var buffer = _context.createBuffer(1, len, _context.sampleRate);
+    var data = buffer.getChannelData(0);
+    var digitalFreq = 0.1;
+    if (freq) {
+        digitalFreq = 2 * Math.PI * freq / _context.sampleRate;
+    }
+    for (var i = 0; i < len; i++) {
+        data[i] = Math.sin(digitalFreq * i);
+    }
+    return buffer;
+}
+
 MorseCodePlayer.prototype.loadSoundFile = function(url, setSound) {
+    var self = this;
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.responseType = 'arraybuffer';
     xhr.onload = function(err) {
-        context.decodeAudioData(this.response,
-            setSound,
+        _context.decodeAudioData(this.response,
+            function(buffer) {
+                setSound(buffer, self);
+            },
             function(err) {
                 console.log('Error decoding file', err);
             });
@@ -107,52 +173,38 @@ MorseCodePlayer.prototype.loadSoundFile = function(url, setSound) {
     xhr.send();
 }
 
-MorseCodePlayer.prototype.createToneSignal = function(len) {
-    var dashBuffer = context.createBuffer(1, len, context.sampleRate);
-    var dashData = dashBuffer.getChannelData(0);
-    for (var i = 0; i < len; i++) {
-        dashData[i] = 20 * Math.sin(0.1 * i);
-    }
-    return dashBuffer;
-}
-
 MorseCodePlayer.prototype.loadSoundSet = function(setNo) {
     // just a plain sinusoid
     if (setNo === 0) {
-        var len = this.DASH_DURATION * context.sampleRate / 1000;
-        var dashBuffer = this.createToneSignal(len);
+        var dashBuffer = this.createToneSignal(this.DASH_DURATION, this.TONE);
         this.setDashSound(dashBuffer);
-        len = this.DOT_DURATION * context.sampleRate / 1000;
-        var dotBuffer = this.createToneSignal(len);
+        var dotBuffer = this.createToneSignal(this.DOT_DURATION, this.TONE);
         this.setDotSound(dotBuffer);
     }
-    // cat
-    else if (setNo === 1) {
-        this.loadSoundFile('static/sounds/cat_dot.wav', this.setDotSound);
-        this.loadSoundFile('static/sounds/cat_dash.wav', this.setDashSound);
-    }
-    // dog
-    else if (setNo === 2) {
-        this.loadSoundFile('static/sounds/dog_dot.wav', this.setDotSound);
-        this.loadSoundFile('static/sounds/dog_dash.wav', this.setDashSound);
+    // other options currently include: setNo=1 - cat; setNo=2 - dog
+    else {
+        this.loadSoundFile(this.SOUND_FILES[setNo - 1][0], this.setDotSound);
+        this.loadSoundFile(this.SOUND_FILES[setNo - 1][1], this.setDashSound);
     }
 }
 
-MorseCodePlayer.prototype.setDotSound = function(decodedArrayBuffer) {
-    dotSource = context.createBufferSource();
-    dotSource.buffer = decodedArrayBuffer;
-    dotSource.connect(context.destination);
+MorseCodePlayer.prototype.setDotSound = function(decodedArrayBuffer, obj) {
+    var self = obj ? obj : this;
+    self.dotSource = _context.createBufferSource();
+    self.dotSource.buffer = decodedArrayBuffer;
+    self.dotSource.connect(_context.destination);
 }
 
-MorseCodePlayer.prototype.setDashSound = function(decodedArrayBuffer) {
-    dashSource = context.createBufferSource();
-    dashSource.buffer = decodedArrayBuffer;
-    dashSource.connect(context.destination);
+MorseCodePlayer.prototype.setDashSound = function(decodedArrayBuffer, obj) {
+    var self = obj ? obj : this;
+    self.dashSource = _context.createBufferSource();
+    self.dashSource.buffer = decodedArrayBuffer;
+    self.dashSource.connect(_context.destination);
 }
 
 MorseCodePlayer.prototype.playText = function(text, update) {
     this.isPlaying = true;
-    this.playSymbol(text, update);
+    this.playSymbol(_morse.encodeWithSpacing(text), update);
 }
 
 MorseCodePlayer.prototype.playSymbol = function(text, update) {
@@ -162,13 +214,13 @@ MorseCodePlayer.prototype.playSymbol = function(text, update) {
     }
     pause = this.DOT_DURATION;
     if (text[0] === '.') {
-        dotSource.start(0);
-        this.setDotSound(dotSource.buffer);
+        this.dotSource.start(0);
+        this.setDotSound(this.dotSource.buffer);
         update();
     }
     else if (text[0] === '-'){
-        dashSource.start(0);
-        this.setDashSound(dashSource.buffer);
+        this.dashSource.start(0);
+        this.setDashSound(this.dashSource.buffer);
         pause = this.DASH_DURATION;
         update();
     }
@@ -182,5 +234,5 @@ MorseCodePlayer.prototype.stop = function() {
     this.isPlaying = false;
 }
 
-var context = new AudioContext();
-var dotSource, dashSource;
+var _context = new AudioContext();
+var _morse = new MorseCodec();

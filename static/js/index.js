@@ -32,8 +32,9 @@ function updateLabels() {
     document.getElementById('decoded-message').textContent = code;
     document.getElementById('played-message').textContent = played;
 
-    if (code === '')
+    if (code === '') {
         document.getElementById('say-button').textContent = 'Say!';
+    }
 }
 
 function play() {
@@ -42,11 +43,14 @@ function play() {
     }
     else {
         var message = document.querySelector('#main input[type="text"]').value;
+        if (message === '') {
+            return;
+        }
         code = morse.encode(message);
         document.getElementById('decoded-message').textContent = code;
         document.getElementById('played-message').textContent = '';
         document.getElementById('say-button').textContent = 'Stop';
-        morsePlayer.playText(morse.encodeWithSpacing(message), updateLabels);
+        morsePlayer.playText(message, updateLabels);
     }
 }
 
