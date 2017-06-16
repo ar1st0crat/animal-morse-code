@@ -49,7 +49,7 @@ MorseCodec.prototype.encode = function(text) {
  * @param {string} text - string to encode
  * @return {string} code - Morse code (with spaces)
  * @example
- *      'hi you' -> '. . . .   . .       - . - -    - - -   . . -'
+ *      'hi you' -> '. . . .   . .       - . - -   - - -   . . -'
  *      (3 spaces between symbols and 7 spaces between words)
  */
 MorseCodec.prototype.encodeWithSpacing = function(text) {

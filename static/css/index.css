@@ -120,13 +120,17 @@ input:focus {
     color: yellow;
 }
 
-.active-visualize {
+#main canvas {
+    width: 360px;
+    padding: 10px;
+}
+
+#active-visualize {
+    height: 50px;
     border: 1px solid rgba(255,255,255,0.5);
     border-radius: 10px;
 }
 
-#sound-visualize {
-    width: 360px;
+#inactive-visualize {
     height: 0px;
-    padding: 10px;
 }

@@ -26,7 +26,7 @@ var code = morse.encodeWithSpacing('hi you');
 console.log(code);
 
 // prints:
-// . . . .   . .       - . - -    - - -   . . -
+// . . . .   . .       - . - -   - - -   . . -
 
 var message = morse.decode(code);
 console.log(message);
@@ -59,17 +59,20 @@ By default no sounds are loaded, but dots and dashes are generated programmatica
 player.loadSoundSet(0);
 ```
 
-You can change the frequency and duration of sounds:
+We can change the frequency and duration of sounds:
 
 ```
 player.TONE = 440
 player.DOT_DURATION = 120
 ```
 
-Keep in mind that the duration of a dash will always be calculated automatically as ```3 * DOT_DURATION```.
+Note that the duration of a dash will always be calculated automatically as ```3 * DOT_DURATION```.
 
 If you need to stop playback just call:
 
 ```
 player.stop();
 ```
+
+
+![pic1](https://github.com/ar1st0crat/animal-morse-code/blob/master/static/images/screenshot.png)

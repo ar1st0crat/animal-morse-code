@@ -6,7 +6,7 @@ var bufferLength = _analyser.frequencyBinCount;
 var dataArray = new Uint8Array(bufferLength);
 
 /** Canvas-related variables */
-var canvas = document.getElementById('sound-visualize');
+var canvas = document.getElementById('inactive-visualize');
 var canvasCtx = canvas.getContext("2d");
 
 /** HTML elements */
@@ -76,13 +76,11 @@ function stop() {
 }
 
 function activateCanvas() {
-    canvas.setAttribute('class', 'active-visualize');
-    canvas.style.height = '50px';
+    canvas.setAttribute('id', 'active-visualize');
 }
 
 function deactivateCanvas() {
-    canvas.setAttribute('class', 'none');
-    canvas.style.height = '0px';
+    canvas.setAttribute('id', 'inactive-visualize');
 }
 
 function draw() {
