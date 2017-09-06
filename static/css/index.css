@@ -6,11 +6,10 @@ body {
     height: 100%;
     margin: 0;
     text-align: center;
-    background: rgb(195, 177, 159);
-    background: -webkit-linear-gradient(rgb(195, 177, 159) 0%, rgb(35, 35, 32) 100%);
-    background: -o-linear-gradient(rgb(195, 177, 159) 0%, rgb(35, 35, 32) 100%);
-    background: linear-gradient(rgb(195, 177, 159) 0%, rgb(35, 35, 32) 100%);
+    background-image: url('../images/bg.png');
+    background-repeat: no-repeat;
     background-attachment: fixed;
+    background-size: cover;
     font-family: "Bree Serif";
     color: white;
 }
@@ -43,6 +42,15 @@ body {
     font-family: 'Bree Serif';
     font-size:  14px;
     margin-bottom: 40px;
+}
+
+#filler {
+    margin-left: 7px;
+    margin-right: 7px;
+    opacity: 0.8;
+    font-size: 0.9em;
+    display: inline-block;
+    transform: rotate(-20deg);
 }
 
 #main {
